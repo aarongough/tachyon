@@ -16,4 +16,15 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.before(:suite) do
+    $benchmarks = {}
+  end
+
+  config.after(:suite) do
+    puts "\n\nBenchmark Results:"
+    $benchmarks.each do |test_name, result|
+      puts test_name.ljust(27) + ": " + result.to_s
+    end
+  end
 end

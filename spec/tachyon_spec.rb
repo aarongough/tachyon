@@ -101,27 +101,4 @@ RSpec.describe Tachyon do
       expect(User.count).to eq(4)
     end
   end
-
-  describe "benchmark" do
-    before do
-      User.delete_all
-    end
-
-    it "compares tachyon to AR" do
-      n = 5000
-      Benchmark.bm do |benchmark|
-        benchmark.report("User.create()") do 
-          n.times do |id|
-            User.create(id: id, name: "Mr. ROBO#{id}", age: id)
-          end
-        end
-
-        benchmark.report("Tachyon.insert(User, hash)") do
-          n.times do |id|
-            Tachyon.insert(User, { id: id + n + 1 , name: "Mr. ROBO#{id}", age: id })
-          end
-        end
-      end
-    end
-  end
 end
