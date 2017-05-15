@@ -13,30 +13,8 @@ class Tachyon
   end
 
   def self.insert_record(klass, data)
-    if klass.has_attribute?(:created_at) && klass.has_attribute?(:updated_at)
-      defaults = { created_at: Time.now, updated_at: Time.now }.with_indifferent_access
-      data = defaults.merge(data.with_indifferent_access)
-    end
-
-    table = klass.arel_table
-    mapped_data = data.map do |key, value|
-      [table[key], value]
-    end
-
-    
-    insert = Arel::InsertManager.new
-    insert.into(table)
-    insert.insert(mapped_data)
-
     begin
-      begin
-        klass.connection.execute(insert.to_sql)
-      rescue ArgumentError
-        # If we can't generate the insert using Arel (likely because
-        # of an issue with a serialized attribute) then fall back
-        # to safe but slow behaviour.
         klass.new(data).save(validate: false)
-      end
     rescue ActiveRecord::RecordNotUnique
     end
   end
