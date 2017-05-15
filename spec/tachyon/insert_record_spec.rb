@@ -41,9 +41,21 @@ RSpec.describe Tachyon do
       expect(User.first.created_at).to eq(time)
     end
 
+    it "allows overrding of 'created_at'" do
+      time = 3.days.ago
+      Tachyon.insert(User, { "name" => "Mr. Borat", "age" =>  82, "created_at" => time })
+      expect(User.first.created_at).to eq(time)
+    end
+
     it "allows overriding of :updated_at" do
       time = 3.days.ago
       Tachyon.insert(User, { name: "Mr. Borat", age: 82, updated_at: time })
+      expect(User.first.updated_at).to eq(time)
+    end
+
+    it "allows overrding of 'updated_at'" do
+      time = 3.days.ago
+      Tachyon.insert(User, { "name" => "Mr. Borat", "age" =>  82, "updated_at" => time })
       expect(User.first.updated_at).to eq(time)
     end
 

@@ -14,8 +14,8 @@ class Tachyon
 
   def self.insert_record(klass, data)
     if klass.has_attribute?(:created_at) && klass.has_attribute?(:updated_at)
-      defaults = { created_at: Time.now, updated_at: Time.now }
-      data = defaults.merge(data)
+      defaults = { created_at: Time.now, updated_at: Time.now }.with_indifferent_access
+      data = defaults.merge(data.with_indifferent_access)
     end
 
     table = klass.arel_table
