@@ -14,42 +14,114 @@ RSpec.describe Tachyon do
   end
 
   describe ".insert" do
-    context "when given a hash" do
-      it "calls insert_record" do
-        allow(Tachyon).to receive(:insert_record)
-        Tachyon.insert(User, {})
+    it "calls insert_record when given a hash" do
+      allow(Tachyon).to receive(:insert_record)
+      Tachyon.insert(User, {})
 
-        expect(Tachyon).to have_received(:insert_record)
-      end
+      expect(Tachyon).to have_received(:insert_record)
     end
 
-    context "when given an array" do
-      it "calls insert_records" do
-        allow(Tachyon).to receive(:insert_records)
-        Tachyon.insert(User, [])
+    it "calls insert_records when given an array" do
+      allow(Tachyon).to receive(:insert_records)
+      Tachyon.insert(User, [])
 
-        expect(Tachyon).to have_received(:insert_records)
-      end
+      expect(Tachyon).to have_received(:insert_records)
     end
 
-    context "when given invalid data" do
-      it "raises an error" do
-        expect {
-          Tachyon.insert(User, 1)  
-        }.to raise_error(ArgumentError)
-      end
+    it "raises an error when given invalid data" do
+      expect {
+        Tachyon.insert(User, 1)  
+      }.to raise_error(ArgumentError)
     end
 
-    context "when given a class that does not inherit from ActiveRecord" do
-      it "raises an error" do
-        expect {
-          Tachyon.insert(NotAModel, {})  
-        }.to raise_error(ArgumentError)
-      end
+    it "raises an error when given a class that does not inherit from ActiveRecord" do
+      expect {
+        Tachyon.insert(NotAModel, {})  
+      }.to raise_error(ArgumentError)
     end
   end
 
-  describe ".insert_record"
+  describe ".insert_record" do
+    before do
+      User.delete_all
+    end
 
-  describe ".insert_records"
+    it "inserts a single record" do
+      Tachyon.insert(User, { name: "Mr. Borat", age: 82 })
+      expect(User.count).to eq(1)
+    end
+
+    it "preserves the given data" do
+      Tachyon.insert(User, { name: "Mr. Borat", age: 82 })
+      expect(User.first.name).to eq("Mr. Borat")
+      expect(User.first.age).to eq(82)
+    end
+
+    it "adds :created_at when not supplied" do
+      Tachyon.insert(User, { name: "Mr. Borat", age: 82 })
+      expect(User.first.created_at).to be_a(Time)
+    end
+
+    it "adds :updated_at when not supplied" do
+      Tachyon.insert(User, { name: "Mr. Borat", age: 82 })
+      expect(User.first.updated_at).to be_a(Time)
+    end
+
+    it "allows overriding of :created_at" do
+      time = 3.days.ago
+      Tachyon.insert(User, { name: "Mr. Borat", age: 82, created_at: time })
+      expect(User.first.created_at).to eq(time)
+    end
+
+    it "allows overriding of :updated_at" do
+      time = 3.days.ago
+      Tachyon.insert(User, { name: "Mr. Borat", age: 82, updated_at: time })
+      expect(User.first.updated_at).to eq(time)
+    end
+
+    it "allows overriding of :id" do
+      Tachyon.insert(User, { id: 82, name: "Mr. Borat", age: 82 })
+      expect(User.find(82)).not_to be nil
+    end
+  end
+
+  describe ".insert_records" do
+    before do
+      User.delete_all
+
+      Tachyon.insert(User, [
+        { name: "Mr. Aaron", age: 23 },
+        { name: "Mr. Borat", age: 24 },
+        { name: "Mr. Crank", age: 25 },
+        { name: "Mr. Delta", age: 26 }
+      ])
+    end
+
+    it "inserts multiple records" do
+      expect(User.count).to eq(4)
+    end
+  end
+
+  describe "benchmark" do
+    before do
+      User.delete_all
+    end
+
+    it "compares tachyon to AR" do
+      n = 5000
+      Benchmark.bm do |benchmark|
+        benchmark.report("User.create()") do 
+          n.times do |id|
+            User.create(id: id, name: "Mr. ROBO#{id}", age: id)
+          end
+        end
+
+        benchmark.report("Tachyon.insert(User, hash)") do
+          n.times do |id|
+            Tachyon.insert(User, { id: id + n + 1 , name: "Mr. ROBO#{id}", age: id })
+          end
+        end
+      end
+    end
+  end
 end

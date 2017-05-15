@@ -1,6 +1,9 @@
 require "bundler/setup"
 require "tachyon"
-require 'active_record'
+require "active_record"
+require "active_support"
+require "active_support/core_ext"
+require "benchmark"
 
 ActiveRecord::Base.establish_connection adapter: "sqlite3", database: ":memory:"
 
