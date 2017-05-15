@@ -57,6 +57,13 @@ RSpec.describe Tachyon do
         Tachyon.insert(UserArticle, { user_id: 1, article_id: 2 })  
       }.not_to raise_error
     end
+
+    it "ignores duplicate key errors" do
+      expect {
+        Tachyon.insert(User, { id: 82, name: "Mr. Borat", age: 82 })
+        Tachyon.insert(User, { id: 82, name: "Mr. Borat", age: 82 })
+      }.not_to raise_error
+    end
   end
 
 end

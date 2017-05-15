@@ -23,17 +23,21 @@ class Tachyon
       [table[key], value]
     end
 
+    
     insert = Arel::InsertManager.new
     insert.into(table)
     insert.insert(mapped_data)
 
     begin
-      klass.connection.execute(insert.to_sql)
-    rescue ArgumentError
-      # If we can't generate the insert using Arel (likely because
-      # of an issue with a serialized attribute) then fall back
-      # to safe but slow behaviour.
-      klass.new(data).save(validate: false)
+      begin
+        klass.connection.execute(insert.to_sql)
+      rescue ArgumentError
+        # If we can't generate the insert using Arel (likely because
+        # of an issue with a serialized attribute) then fall back
+        # to safe but slow behaviour.
+        klass.new(data).save(validate: false)
+      end
+    rescue ActiveRecord::RecordNotUnique
     end
   end
 

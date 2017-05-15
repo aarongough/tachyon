@@ -11,7 +11,7 @@ RSpec.describe Tachyon do
       User.delete_all
     end
 
-    let(:row_count) { 5000 }
+    let(:row_count) { 2500 }
 
     it "benchmarks insertion via ActiveRecord" do
       $benchmarks["User.create()"] = Benchmark.measure do
