@@ -8,4 +8,9 @@ ActiveRecord::Schema.define do
     t.timestamps
   end
 
+  create_table :user_articles, :force => true do |t|
+    t.integer :article_id
+    t.integer :user_id
+  end
+
 end

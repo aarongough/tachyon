@@ -21,6 +21,14 @@ RSpec.describe Tachyon do
       end
     end
 
+    it "benchmarks insertion via ActiveRecord.new" do
+      $benchmarks["User.save(validate: false)"] = Benchmark.measure do
+       row_count.times do |id|
+          User.new(id: id, name: "Mr. ROBO#{id}", age: id).save(validate: false)
+        end
+      end
+    end
+
     it "benchmarks insertion via raw SQL" do
       $benchmarks["Raw SQL"] = Benchmark.measure do
         row_count.times do |id|
@@ -28,6 +36,19 @@ RSpec.describe Tachyon do
             INSERT INTO users (id, name, age, created_at, updated_at) 
             VALUES (#{id}, 'Mr. ROBO#{id}', #{id}, '#{Time.now.to_s}', '#{Time.now.to_s}')
           ")
+        end
+      end
+    end
+
+    it "benchmarks insertion via raw SQL with transaction" do
+      $benchmarks["Raw SQL with transaction"] = Benchmark.measure do
+        User.connection.transaction do
+          row_count.times do |id|
+            User.connection.execute("
+              INSERT INTO users (id, name, age, created_at, updated_at) 
+              VALUES (#{id}, 'Mr. ROBO#{id}', #{id}, '#{Time.now.to_s}', '#{Time.now.to_s}')
+            ")
+          end
         end
       end
     end

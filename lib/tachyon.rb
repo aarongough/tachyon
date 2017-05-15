@@ -13,8 +13,10 @@ class Tachyon
   end
 
   def self.insert_record(klass, data)
-    defaults = { created_at: Time.now, updated_at: Time.now }
-    data = defaults.merge(data)
+    if klass.has_attribute?(:created_at) && klass.has_attribute?(:updated_at)
+      defaults = { created_at: Time.now, updated_at: Time.now }
+      data = defaults.merge(data)
+    end
 
     table = klass.arel_table
     mapped_data = data.map do |key, value|
