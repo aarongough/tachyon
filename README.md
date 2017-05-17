@@ -4,19 +4,19 @@ Tachyon is a simple library designed to insert rows into any DB managed by Activ
 
 ## How fast is it?
 
-Tachyon is roughly as fast as executing raw SQL via `ActiveRecord::Base.connection`:
+Tachyon is as fast (or faster) than executing raw SQL via `ActiveRecord::Base.connection`:
 
 ```
 Benchmark Results (Inserting 10,000 rows):
 ------------------------------------------------
-User.create(Hash)                 : 8.10 seconds
+User.create(Hash)                 : 7.72 seconds
 Raw SQL (w/ string interpolation) : 1.01 seconds
-Tachyon.insert(User, Hash)        : 1.03 seconds
+Tachyon.insert(User, Hash)        : 1.00 seconds
 ```
 
 ## Features
 
-* As fast as generating SQL via string interpolation, but with a much nicer syntax!
+* As fast (or faster!) than generating SQL via string interpolation, but with a much nicer syntax!
 * Suppresses duplicate key errors, which makes life easier when doing bulk data imports
 * Allows you to dump records from the database in a useful format via `Tachyon.dump_record`
 * Compatible with MySQL, PostgreSQL and SQLite3
