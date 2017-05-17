@@ -1,6 +1,6 @@
 # Tachyon
 
-Tachyon is a simple library designed to insert rows into any DB managed by ActiveRecord as fast as possible. Tachyon does not do validations, and only does minimal typescasting. Tachyon simply gets records into the DB as fast as possible. This is very useful in the case when you need to bulk-insert data for some reason, but it really shouldn't be used to replace your normal ActiveRecord DB operations.
+Tachyon is a simple library designed to insert rows into any DB managed by ActiveRecord as fast as possible. Tachyon does not do validations, and only does minimal typecasting. Tachyon simply gets records into the DB as fast as possible. This is very useful in the case when you need to bulk-insert data for some reason, but it really shouldn't be used to replace your normal ActiveRecord DB operations.
 
 An ideal use-case for Tachyon (and the reason it was developed) is to dump/insert data from the DB as part of the setup step for large test cases.
 
