@@ -4,36 +4,42 @@ RSpec.describe Tachyon do
   before do
     class User < ActiveRecord::Base
     end
-
-    class NotAModel
-    end
   end
 
   describe ".insert" do
-    it "calls insert_record when given a hash" do
-      allow(Tachyon).to receive(:insert_record)
-      Tachyon.insert(User, {})
-
-      expect(Tachyon).to have_received(:insert_record)
+    before do
+      User.delete_all
     end
 
-    it "calls insert_records when given an array" do
-      allow(Tachyon).to receive(:insert_records)
-      Tachyon.insert(User, [])
+    let(:data) { { id: 2, name: "Mr. Borat", age: 82, smoker: 1, created_at: "2016-06-30 03:32:49", updated_at: "2016-06-30 03:32:49" } }
 
-      expect(Tachyon).to have_received(:insert_records)
+    it "inserts a single record" do
+      Tachyon.insert(User, data)
+      expect(User.count).to eq(1)
     end
 
-    it "raises an error when given invalid data" do
+    it "allows setting of nils" do
+      data[:name] = nil
+      Tachyon.insert(User, data)
+      expect(User.first.name).to eq(nil)
+    end
+
+    it "preserves the given data" do
+      Tachyon.insert(User, data)
+
+      attributes = User.first.attributes_before_type_cast
+      expect(attributes["id"]).to eq(data[:id])
+      expect(attributes["name"]).to eq(data[:name])
+      expect(attributes["age"]).to eq(data[:age])
+      expect(attributes["created_at"]).to eq(data[:created_at])
+      expect(attributes["updated_at"]).to eq(data[:updated_at])
+    end
+
+    it "ignores duplicate key errors" do
       expect {
-        Tachyon.insert(User, 1)  
-      }.to raise_error(ArgumentError)
-    end
-
-    it "raises an error when given a class that does not inherit from ActiveRecord" do
-      expect {
-        Tachyon.insert(NotAModel, {})  
-      }.to raise_error(ArgumentError)
+        Tachyon.insert(User, data)
+        Tachyon.insert(User, data)
+      }.not_to raise_error
     end
   end
 

@@ -4,6 +4,7 @@ require "active_record"
 require "active_support"
 require "active_support/core_ext"
 require "benchmark"
+require "ruby-prof"
 
 ActiveRecord::Base.establish_connection adapter: "sqlite3", database: ":memory:"
 
@@ -24,7 +25,11 @@ RSpec.configure do |config|
   config.after(:suite) do
     puts "\n\nBenchmark Results:"
     $benchmarks.each do |test_name, result|
-      puts test_name.ljust(27) + ": " + result.to_s
+      puts test_name.ljust(34) + ": " + result.to_s
     end
+
+    puts "\n\nProfile Results:"
+    printer = RubyProf::FlatPrinter.new($profile)
+    printer.print(STDOUT, :min_percent => 2)
   end
 end

@@ -27,4 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "activerecord", "~> 5.1.1"
   spec.add_development_dependency "activesupport", "~> 5.1.1"
   spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "ruby-prof"
 end
