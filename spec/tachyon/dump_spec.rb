@@ -6,7 +6,7 @@ RSpec.describe Tachyon do
     end
   end
 
-  describe ".dump_record" do
+  describe ".dump" do
     before do
       User.delete_all
     end
@@ -15,14 +15,14 @@ RSpec.describe Tachyon do
     let(:user) { User.create(data) }
 
     it "should dump the attributes for the record" do
-      dump = Tachyon.dump_record(user)
+      dump = Tachyon.dump(user)
       expect(dump).to eq(data)
     end
 
     it "calls dump_attribute for each attribute" do
       allow(Tachyon).to receive(:dump_attribute)
 
-      Tachyon.dump_record(user)
+      Tachyon.dump(user)
 
       expect(Tachyon).to have_received(:dump_attribute).with(user.id)
       expect(Tachyon).to have_received(:dump_attribute).with(user.name)
@@ -35,7 +35,7 @@ RSpec.describe Tachyon do
 
     it "should produce a format that works with .insert" do
       expect {
-        data = Tachyon.dump_record(user)
+        data = Tachyon.dump(user)
         data[:id] = 55
         Tachyon.insert(User, data)
       }.not_to raise_error

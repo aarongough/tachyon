@@ -21,6 +21,5 @@ RSpec.describe Tachyon do
       end
     end
 
-
   end
 end
