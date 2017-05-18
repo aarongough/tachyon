@@ -24,6 +24,20 @@ RSpec.describe Tachyon do
       expect(User.first.name).to eq(nil)
     end
 
+    it "allows creation of a partial record" do
+      expect {
+        Tachyon.insert(User, created_at: "2016-06-30 03:32:49", updated_at: "2016-06-30 03:32:49")
+      }.not_to raise_error
+      expect(User.count).to eq(1)
+    end
+
+    it "allows the use of string keys" do
+      expect {
+        Tachyon.insert(User, "created_at" => "2016-06-30 03:32:49", "updated_at" => "2016-06-30 03:32:49")
+      }.not_to raise_error
+      expect(User.count).to eq(1)
+    end
+
     it "preserves the given data" do
       Tachyon.insert(User, data)
 

@@ -3,7 +3,6 @@ require "tachyon/version"
 class Tachyon
   class << self
 
-    @@sql_cache = {}
     @@connection_cache = {}
 
     def insert(klass, data)
@@ -18,28 +17,14 @@ class Tachyon
     end
 
     def sql_for(klass, data)
-      sql_template_for(klass) % quote_data(data)
-    rescue KeyError => e
-      raise "Data was not supplied for all columns - " + e.to_s
-    end
+      columns = "`" + data.keys.join("`, `") + "`"
+      values = quote_data(data.values).join(", ")
 
-    def sql_template_for(klass)
-      return @@sql_cache[klass] if @@sql_cache.has_key?(klass)
-
-      columns = klass.columns.map(&:name)
-      table_name = klass.table_name
-      columns_string = columns.map {|x| "`#{x}`" }.join(", ")
-      values_string = columns.map {|x| "%{#{x}}" }.join(", ")
-
-      sql = "INSERT INTO `#{table_name}` (#{columns_string}) VALUES (#{values_string})"
-
-      @@sql_cache[klass] = sql
+      "INSERT INTO `#{klass.table_name}` (#{columns}) VALUES (#{values})"
     end
 
     def quote_data(data)
-      data.map do |key, value|
-        [key, quote_value(value)]
-      end.to_h
+      data.map {|value| quote_value(value) }
     end
 
     def quote_value(value)
@@ -65,6 +50,6 @@ class Tachyon
       else attribute
       end
     end
-    
+
   end
 end

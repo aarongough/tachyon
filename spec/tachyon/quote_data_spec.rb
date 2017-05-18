@@ -13,7 +13,7 @@ RSpec.describe Tachyon do
     it "calls quote_value for each value" do
       allow(Tachyon).to receive(:quote_value)
 
-      Tachyon.quote_data(data)
+      Tachyon.quote_data(data.values)
 
       expect(Tachyon).to have_received(:quote_value).with(data[:id])
       expect(Tachyon).to have_received(:quote_value).with(data[:name])
