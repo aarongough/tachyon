@@ -34,7 +34,7 @@ Tachyon does extremely minimal typecasting. Integers and Floats are passed throu
 
 ## Usage
 
-To insert simply supply the model class along with a hash of attributes. It's important to note that the keys of the hash must be symbols, not strings:
+To insert simply supply the model class along with a hash of attributes:
 
 ```ruby
 Tachyon.insert(Article, id: 13, title: "Brand new article")
