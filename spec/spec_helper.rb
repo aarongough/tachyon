@@ -28,8 +28,10 @@ RSpec.configure do |config|
       puts test_name.ljust(34) + ": " + result.to_s
     end
 
-    puts "\n\nProfile Results:"
-    printer = RubyProf::FlatPrinter.new($profile)
-    printer.print(STDOUT, :min_percent => 2)
+    if $profile
+      puts "\n\nProfile Results:"
+      printer = RubyProf::FlatPrinter.new($profile)
+      printer.print(STDOUT, :min_percent => 2)
+    end
   end
 end
