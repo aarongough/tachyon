@@ -5,7 +5,7 @@ class Tachyon
 
     @@connection_cache = {}
 
-    def insert(klass, data)
+    def insert(klass, *data)
       connection_for(klass).execute(sql_for(klass, data))
     rescue ActiveRecord::RecordNotUnique
       # NO OP
@@ -17,10 +17,16 @@ class Tachyon
     end
 
     def sql_for(klass, data)
-      columns = "`" + data.keys.join("`, `") + "`"
-      values = quote_data(data.values).join(", ")
+      keys = data.map { |d| d.keys }.flatten.uniq
+      columns = "`" + keys.join("`, `") + "`"
 
-      "INSERT INTO `#{klass.table_name}` (#{columns}) VALUES (#{values})"
+      values = data.map do |row|
+        keys.map do |key|
+          quote_value(row[key])
+        end.join(",").prepend("(") << ")"
+      end.join(",")
+
+      "INSERT INTO `#{klass.table_name}` (#{columns}) VALUES #{values}"
     end
 
     def quote_data(data)
